@@ -1,0 +1,162 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+Table Repasses {
+  id_Repasse integer [primary key]
+  Ano_Repasse varchar
+  Fonte varchar
+  Eixo timestamp
+  Natureza varchar
+  Valor_Repasse float
+}
+
+Table Projetos{
+  id_Projeto integer [primary key]
+  id_Repasse integer
+  Nome_Projeto varchar
+  Valor_Planejado float
+}
+
+Table Pessoas{
+  CPF varchar [primary key]
+  Nome_Completo varchar
+  Sexo varchar //Masculino, Feminino, Prefiro Não Informar
+  Data_Nascimento datetime
+  Orgao_Origem varchar //PMDF, CBMDF, PCDF, DETRAN-DF, SEAPE, outro, Sem Vínculo
+  Lotação varchar //SSPDF, PMDF, CBMDF, PCDF, DETRAN-DF, SEAPE, outro, Sem Vínculo
+  Setor varchar // 
+  Telefone1 varchar
+  Telefone2 varchar
+  email1 varchar
+  email2 varchar
+  situacao_funcional varchar // Serviço Ativo, Reserva/Aposentado, PTTC
+  posto_graduação varchar // Coronel, Tenente-Coronel, Major, Capitão, 1º Tenente, 2º Tenente, Aspirante a Oficial, Cadete, Subtenente, 1º Sargento, 2º Sargento, 3º Sargento, Cabo, Soldado, Soldado 2º Classe
+  carreira_detran varchar // Analista de Trânsito, Agente de Trânsito, Técnico de Trânsito, Especialista de Trânsito, outro
+  carreira_pc varchar // Delegado de Polícia, Perito Médico-Legista, Perito Criminal, Agente de Polícia, Escrivão de Polícia, Papiloscopista Policial, Agente Policial de Custódia, outro
+  carreira_penal varchar // Policial Penal, outro
+  carreira_pm varchar // QOPM, QPPM, QOPMSM, QOPMSV, QOPMSD, QOPMC, QOPMA, QOPMES, QOPMEM, QOPMEA, QOPMEV, QOPMM, QOPMEC, outro quadro de oficiais, outro quadro de praças
+  carreira_cbm varchar // QOBM/Comb., QOBM/Compl., QOBM/Saúde, QOBM/Capelão, QOBM/Adm., QOBM/Cond.,  QOBM/Mnt.,  QOBM/Mus, QBMG-1, QBMG-2, QBMG-3, QBMG-4, outro quadro de oficiais, outro quadro de praças
+
+  Chefe_imediato_nome varchar
+  Chefe_imediato_contato varchar
+
+}
+
+Table Inscricoes{
+  id_inscricao integer [primary key]
+  Termo_Compromisso bool
+  id_capacitacao integer
+  CPF varchar
+  Matriculado bool
+  Concluido bool
+}
+
+Table Inscricao_Moodle{
+  id_inscricao integer [primary key]
+  id_capacitacao integer
+
+  CPF varchar [primary key]
+  Nome_Completo varchar
+  Sexo varchar //Masculino, Feminino, Prefiro Não Informar
+  Data_Nascimento datetime
+  Orgao_Origem varchar //PMDF, CBMDF, PCDF, DETRAN-DF, SEAPE, outro, Sem Vínculo
+  Lotação varchar //SSPDF, PMDF, CBMDF, PCDF, DETRAN-DF, SEAPE, outro, Sem Vínculo
+  Setor varchar // 
+  Telefone1 varchar
+  Telefone2 varchar
+  email1 varchar
+  email2 varchar
+  situacao_funcional varchar // Serviço Ativo, Reserva/Aposentado, PTTC
+  posto_graduação varchar // Coronel, Tenente-Coronel, Major, Capitão, 1º Tenente, 2º Tenente, Aspirante a Oficial, Cadete, Subtenente, 1º Sargento, 2º Sargento, 3º Sargento, Cabo, Soldado, Soldado 2º Classe
+  carreira_detran varchar // Analista de Trânsito, Agente de Trânsito, Técnico de Trânsito, Especialista de Trânsito, outro
+  carreira_pc varchar // Delegado de Polícia, Perito Médico-Legista, Perito Criminal, Agente de Polícia, Escrivão de Polícia, Papiloscopista Policial, Agente Policial de Custódia, outro
+  carreira_penal varchar // Policial Penal, outro
+  carreira_pm varchar // QOPM, QPPM, QOPMSM, QOPMSV, QOPMSD, QOPMC, QOPMA, QOPMES, QOPMEM, QOPMEA, QOPMEV, QOPMM, QOPMEC, outro quadro de oficiais, outro quadro de praças
+  carreira_cbm varchar // QOBM/Comb., QOBM/Compl., QOBM/Saúde, QOBM/Capelão, QOBM/Adm., QOBM/Cond.,  QOBM/Mnt.,  QOBM/Mus, QBMG-1, QBMG-2, QBMG-3, QBMG-4, outro quadro de oficiais, outro quadro de praças
+
+  Chefe_imediato_nome varchar
+  Chefe_imediato_contato varchar
+
+}
+
+Table Acoes{
+  id_acao integer [primary key]
+  id_Projeto integer
+  Nome_acao varchar
+  tipo_acao varchar
+  data_inicio_planejado date
+  data_fim_planejado date
+  data_inicio_real date
+  data_fim_real date
+}
+
+Table Contratacao{
+  id_contratacao integer  [primary key]
+  id_acao integer
+	CNPJ_Contratada varchar
+	Nome_Contratada varchar
+	Data_Contrato date
+	Data_Encerramento_Contrato date
+	Valor_Reservado money
+	Valor_Empenhado money
+	Valor_Liquidado money
+  id_etapa_atual int [ref: - Etapa_contratacao.id_etapa]
+}
+
+Table Etapa_contratacao{
+  id_etapa integer 
+  id_contratacao integer
+  tipo_etapa varchar// DOD, ETP, TR,  Contratação, Execução
+  SEI varchar
+  Responsável varchar
+  Data_inicio_etapa date
+  Data_fim_etapa date
+}
+
+Table Capacitacoes{
+  id_capacitacao integer [primary key]
+  id_acao integer
+  Nome_capacitacao varchar
+  Nome_escola varchar
+  Nível_Capacitação varchar // 'Pós-Graduação Lato Sensu', 'Pós-Graduação Stricto Sensu'
+  Modalidade varchar // Presencial, on-line síncrono, on-line gravado, misto
+  Carga_Horaria_horas integer
+  Vagas_Ofertadas integer
+  data_inicio_planejado date
+  data_fim_planejado date
+  data_inicio_real date
+  data_fim_real date
+}
+
+Table Selecoes{
+  id_selecao integer [primary key]
+  id_capacitacao integer
+
+  Responsavel_selecao varchar
+  SEI_Seleção varchar
+}
+
+
+
+Ref repasse_projeto: Repasses.id_Repasse < Projetos.id_Repasse
+
+Ref projeto_acao: Projetos.id_Projeto < Acoes.id_Projeto
+
+//Ref pessoas_inscricoes: Pessoas.CPF < Inscricoes.CPF
+
+Ref Contratacao_acao: Acoes.id_acao < Contratacao.id_acao
+
+Ref Contratacao_etapa: Contratacao.id_contratacao < Etapa_contratacao.id_contratacao
+
+Ref capacitacaoacao: Acoes.id_acao < Capacitacoes.id_acao
+
+Ref selecao_capacitacao: Capacitacoes.id_capacitacao < Selecoes.id_capacitacao
+
+Ref inscricao_capacitacao: Inscricoes.id_capacitacao > Capacitacoes.id_capacitacao
+
+Ref inscricao_moodle: Inscricao_Moodle.id_capacitacao > Capacitacoes.id_capacitacao
+
+
+// Como incluir programas transversais?
+// Como incluir o PAC?
