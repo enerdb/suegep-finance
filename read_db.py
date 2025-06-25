@@ -204,4 +204,26 @@ def read_db():
 
     return bi_db
 
+def print_db(bi_db, format='console'):
+    """
+    Imprime os DataFrames do banco de dados BI_db.
+    """
+
+    if format == 'console':
+        print_funcion = print
+    elif format == 'streamlit':
+        import streamlit as st
+        print_funcion = st.write
+        
+    for key, value in bi_db.items():
+        print_funcion(f"{key} ({value.shape[0]} linhas, {value.shape[1]} colunas)")
+        print_funcion(value.dtypes)
+        print_funcion(value.head())
+        print_funcion("\n")
+
+    # for key, value in st.session_state.bi_db.items():
+    #     with st.expander(f"{key} ({value.shape[0]} linhas, {value.shape[1]} colunas)", expanded=False):
+    #         st.write(f"**{key}**")
+    #         st.write(value.dtypes)
+    #         st.dataframe(value)
 
