@@ -11,8 +11,8 @@ import base64
 import os
 import pandas as pd
 import json
+import locale
 import config
-
 
 def generate_credentials():
     if not os.path.exists("credentials.json"):
@@ -46,10 +46,50 @@ def get_sheet_from_drive(planilha):
     return client.open(title=nome_planilha, folder_id=id_pasta)
 
 
-def update_worksheet_from_df(worksheet, df):
-    worksheet.update([df.columns.values.tolist()] + df.values.tolist())
+def update_worksheet_from_df(worksheet, df, debug = False):
+    
+
+    df_clean = df.copy().reset_index()
+
+    # 1. Substitui NaN e NaT por None
+    #df_clean = df.where(pd.notnull(df_clean), None) 
+
+    # 2. Converte colunas datetime para string no formato "dd/mm/yyyy"
+    for col in df_clean.select_dtypes(include=["datetime64", "datetime64[ns]"]).columns:
+        if debug:
+            print(df_clean[col].head())
+        df_clean[col] = df_clean[col].dt.strftime("%d/%m/%Y").fillna('').infer_objects(copy=False)
+        if debug:
+            print(df_clean[col].head())
+
+    # Converte colunas float para string no formato 
+    for col in df_clean.select_dtypes(include=["float"]).columns:
+        if debug:
+            print(df_clean[col].head())
+        df_clean[col] = df_clean[col].apply(lambda x: f"{x:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.').replace('nan',''))
+        
+        if debug:
+            print(df_clean[col].head())
+
+
+    # 3. Converte todos os tipos para object para evitar problemas de tipo
+    df_clean = df_clean.astype(object).fillna('').infer_objects(copy=False)
+
+
+    if debug:
+        print("Colunas")
+        print(df_clean.dtypes)
+        print("DataFrame limpo:")
+        print(df_clean)
+    
+    # 5. Atualiza a planilha com os dados do DataFrame
+    worksheet.update([df_clean.columns.values.tolist()] + df_clean.values.tolist())
 
 
 def get_df_from_drive(sheet, tab):
     # tab = nome da aba
-    return pd.DataFrame(sheet.worksheet(tab).get_all_records())
+    raw = sheet.worksheet(tab).get_all_values()
+
+    # retorna dados brutos
+    return pd.DataFrame(raw[1:], columns=raw[0])
+    
