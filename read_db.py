@@ -84,8 +84,8 @@ def ajusta_boolean_columns(df: pd.DataFrame, columns: list) -> pd.DataFrame:
 
 def read_repasses(spreadsheet):
     
-    # Cols: id_Repasse	Ano_Repasse	Fonte	Eixo	Natureza	Valor_Repasse_Inicial	Ajustes_Soma	Valor_Repasse_Autual	SEI
-    colunas_financeiras = ['Valor_Repasse_Inicial', 'Ajustes_Soma', 'Valor_Repasse_Autual']
+    # Cols: id_Repasse	Ano_Repasse	Fonte	Eixo	Natureza	Valor_Repasse_Inicial	Ajustes_Soma	Valor_Repasse_Atual	SEI
+    colunas_financeiras = ['Valor_Repasse_Inicial', 'Ajustes_Soma', 'Valor_Repasse_Atual']
     
     df = get_df_from_drive(spreadsheet, 'Repasses')
     df = ajusta_dados_financeiros_df(df, colunas_financeiras)
@@ -93,14 +93,17 @@ def read_repasses(spreadsheet):
     return df.set_index('id_Repasse')
 
 def read_repasses_alteracoes(spreadsheet):
-    # Cols: id_Repasse	Evento	Valor_Ajuste	SEI
+    # Cols: id_Repasse	Evento	Valor_Ajuste	SEI     Data_Ajuste
 
     colunas_financeiras = ['Valor_Ajuste']
+    colunas_datetime = ['Data_Ajuste'] 
 
     df = get_df_from_drive(spreadsheet, 'Repasses_Alterações')
     df = ajusta_dados_financeiros_df(df, colunas_financeiras)
+    df = ajusta_datetime_columns(df, colunas_datetime)
     
-    return df.set_index('id_Repasse')
+    #return df.set_index('id_Repasse')
+    return df
 
 def read_projetos(spreadsheet):
     # cols: id_Projeto	id_Repasse	Nome_Projeto	Valor_Planejado_Inicial	Ajustes_Soma	Valor_Planejado_Atual
@@ -119,7 +122,8 @@ def read_projetos_alteracoes(spreadsheet):
     df = get_df_from_drive(spreadsheet, 'Projetos_Alterações')
     df = ajusta_dados_financeiros_df(df, colunas_financeiras)
 
-    return df.set_index('id_Projeto')
+    #return df.set_index('id_Projeto')
+    return df
 
 def read_acoes(spreadsheet):
     #Cols: id_Ação	id_Projeto	Nome_Ação	Tipo_Ação	Data_Início_Planejado	Data_Fim_Planejado	Data_Início_Real	Data_Fim_Real	Status	Histórico
@@ -191,9 +195,9 @@ def read_db():
     bi_db = {}
     spreadsheet = get_sheet_from_drive('BI_db')
     bi_db['Repasses'] = read_repasses(spreadsheet)
-    # bi_db['Repasses_Alterações'] = read_repasses_alteracoes(spreadsheet)
+    bi_db['Repasses_Alterações'] = read_repasses_alteracoes(spreadsheet)
     bi_db['Projetos'] = read_projetos(spreadsheet)
-    # bi_db['Projetos_Alterações'] = read_projetos_alteracoes(spreadsheet)
+    bi_db['Projetos_Alterações'] = read_projetos_alteracoes(spreadsheet)
     bi_db['Ações'] = read_acoes(spreadsheet)
     bi_db['Contratações'] = read_contratacoes(spreadsheet)
     bi_db['Etapa_Contratação'] = read_etapa_contratacao(spreadsheet)
