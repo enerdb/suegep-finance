@@ -11,8 +11,8 @@ import base64
 import os
 import pandas as pd
 import json
-import locale
 import config
+import datetime
 
 def generate_credentials():
     if not os.path.exists("credentials.json"):
@@ -46,10 +46,62 @@ def get_sheet_from_drive(planilha):
     return client.open(title=nome_planilha, folder_id=id_pasta)
 
 
-def update_worksheet_from_df(worksheet, df, debug = False):
-    
 
+def update_worksheet_from_df(worksheet, df, debug=False):
     df_clean = df.copy().reset_index()
+
+    # 1. Converte colunas datetime64 para string no formato "dd/mm/yyyy"
+    for col in df_clean.select_dtypes(include=["datetime64", "datetime64[ns]"]).columns:
+        if debug:
+            print(f"Antes datetime64: {col}")
+            print(df_clean[col].head())
+        df_clean[col] = df_clean[col].dt.strftime("%d/%m/%Y").fillna('')
+        if debug:
+            print(f"Depois datetime64: {col}")
+            print(df_clean[col].head())
+
+    # 2. Converte objetos date/datetime que não são datetime64 para string
+    for col in df_clean.columns:
+        if df_clean[col].dtype == "object":
+            df_clean[col] = df_clean[col].apply(
+                lambda x: x.strftime("%d/%m/%Y") if isinstance(x, (datetime.date, datetime.datetime)) else x
+            )
+
+    # 3. Converte colunas float para string no formato brasileiro
+    for col in df_clean.select_dtypes(include=["float"]).columns:
+        if debug:
+            print(f"Antes float: {col}")
+            print(df_clean[col].head())
+        df_clean[col] = df_clean[col].apply(
+            lambda x: f"{x:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+            if pd.notnull(x) else ''
+        )
+        if debug:
+            print(f"Depois float: {col}")
+            print(df_clean[col].head())
+
+    # 4. Converte todos os tipos para object e substitui NaN/None por string vazia
+    df_clean = df_clean.astype(object).fillna('')
+
+    if debug:
+        print("Colunas e tipos finais:")
+        print(df_clean.dtypes)
+        print("DataFrame final limpo:")
+        print(df_clean)
+
+    # 5. Limpa a planilha (remove todas as linhas)
+    worksheet.clear()
+
+    # 6. Atualiza a planilha com os dados do DataFrame
+    worksheet.update([df_clean.columns.values.tolist()] + df_clean.values.tolist())
+
+
+def update_worksheet_from_df_old(worksheet, df, debug = False):
+    
+    df_clean = df.copy()
+
+    if 'index' in df_clean.columns:
+        df_clean = df_clean.drop(columns=['index'])
 
     # 1. Substitui NaN e NaT por None
     #df_clean = df.where(pd.notnull(df_clean), None) 
@@ -57,10 +109,20 @@ def update_worksheet_from_df(worksheet, df, debug = False):
     # 2. Converte colunas datetime para string no formato "dd/mm/yyyy"
     for col in df_clean.select_dtypes(include=["datetime64", "datetime64[ns]"]).columns:
         if debug:
+            print(f"Antes datetime64: {col}")
             print(df_clean[col].head())
-        df_clean[col] = df_clean[col].dt.strftime("%d/%m/%Y").fillna('').infer_objects(copy=False)
+        df_clean[col] = df_clean[col].dt.strftime("%d/%m/%Y").fillna('')
         if debug:
+            print(f"Depois datetime64: {col}")
             print(df_clean[col].head())
+
+    # 2. Converte objetos date/datetime que não são datetime64 para string
+    for col in df_clean.columns:
+        if df_clean[col].dtype == "object":
+            df_clean[col] = df_clean[col].apply(
+                lambda x: x.strftime("%d/%m/%Y") if isinstance(x, (datetime.date, datetime.datetime)) else x
+            )
+
 
     # Converte colunas float para string no formato 
     for col in df_clean.select_dtypes(include=["float"]).columns:
@@ -82,6 +144,9 @@ def update_worksheet_from_df(worksheet, df, debug = False):
         print("DataFrame limpo:")
         print(df_clean)
     
+    # 4. Limpa a planilha (remove todas as linhas)
+    worksheet.clear()
+
     # 5. Atualiza a planilha com os dados do DataFrame
     worksheet.update([df_clean.columns.values.tolist()] + df_clean.values.tolist())
 

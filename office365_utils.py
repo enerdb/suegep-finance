@@ -47,6 +47,7 @@ def get_df_from_excel(arquivo_excel):
     return pd.read_excel(bytes_file_obj)
 
 
+
 ### Editar ou sobrescrever dados
 
 def update_excel_from_df(df, ctx, arquivo_excel, sheet_name):
