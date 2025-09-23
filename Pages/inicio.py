@@ -45,13 +45,17 @@ st.title("Dados BI SUEGEP")
 
 ################################
 # Carga dos dados do drive
+carregando = False
 
 with st.spinner("Carregando dados do Google Sheets..."):
     if 'bi_db' not in st.session_state:
+        carregando = True
         st.session_state.bi_db = read_db_drive()
         st.session_state.filtered_db = st.session_state.bi_db.copy()
+if carregando:
+    st.success("Dados carregados com sucesso!")
+    carregando = False
 
-st.success("Dados carregados com sucesso!")
 
 ################################
 # Imprimir dados na tela
@@ -86,6 +90,10 @@ if uploaded_file is not None:
     data_dict = read_db_excel(uploaded_file)
     if data_dict.keys() != st.session_state.bi_db.keys():
         st.error("O arquivo Excel enviado não contém as abas esperadas.")
+        st.error(f"Abas esperadas: {st.session_state.bi_db.keys()}")
+        st.error(f"Abas encontradas: {data_dict.keys()}")
+
+
         st.stop()
     
     st.session_state.bi_db = data_dict
@@ -103,12 +111,7 @@ render_sidebar()
 
 st.markdown("""
             #### Próximos passos
-            - Unificar filtros no código e salvar dfs filtrados no session_state
-            - Inclusão de formulários para edição dos dados.
-            - Página de acompanhamento de repasses e recursos
-            - Página de monitoramento de ações de projetos
-            - Página para lançar ações em projetos.
-            - Página de acompanhamento de ações de projetos.
+            - Inclusão de formulários para edição de Metas.
+            - Página para lançar ações em projetos/ Página de acompanhamento de ações de projetos.
             - Página de acompnhamento de contratações e execuções.
-            - Página para upload de tabelas em formato csv vindas do moodle.
 """)

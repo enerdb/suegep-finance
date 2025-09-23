@@ -137,6 +137,10 @@ def trata_inscricoes_moodle(df):
     return df.set_index('id_inscrição')
 
 
+def trata_metas(df):
+    return df.set_index('id_Meta')  # ainda não implementado
+
+
 def trata_apoio(df):
     return df  # ainda não implementado
 
@@ -159,6 +163,7 @@ def read_db_drive():
         'Seleções': trata_selecoes(get_df_from_drive(spreadsheet, 'Seleções')),
         'Inscrições': trata_inscricoes(get_df_from_drive(spreadsheet, 'Inscrições')),
         'Inscrições_Moodle': trata_inscricoes_moodle(get_df_from_drive(spreadsheet, 'Inscrições_Moodle')),
+        'Metas': trata_metas(get_df_from_drive(spreadsheet, 'Metas')),
         # 'Apoio': trata_apoio(get_df_from_drive(spreadsheet, 'Apoio')),
     }
 
@@ -179,6 +184,7 @@ def read_db_excel(path: str):
         'Seleções': trata_selecoes(pd.read_excel(path, sheet_name='Seleções')),
         'Inscrições': trata_inscricoes(pd.read_excel(path, sheet_name='Inscrições')),
         'Inscrições_Moodle': trata_inscricoes_moodle(pd.read_excel(path, sheet_name='Inscrições_Moodle')),
+        'Metas': trata_metas(pd.read_excel(path, sheet_name='Metas')),
         # 'Apoio': trata_apoio(pd.read_excel(path, sheet_name='Apoio')),
     }
 
@@ -204,10 +210,8 @@ def update_db_drive(bi_db):
 
     update_worksheet_from_df(spreadsheet.worksheet('Repasses'), bi_db['Repasses'])
     update_worksheet_from_df(spreadsheet.worksheet('Repasses_Alterações'), bi_db['Repasses_Alterações']) # teste
-
     update_worksheet_from_df(spreadsheet.worksheet('Projetos'), bi_db['Projetos'])
     update_worksheet_from_df(spreadsheet.worksheet('Projetos_Alterações'), bi_db['Projetos_Alterações']) # teste
-
     update_worksheet_from_df(spreadsheet.worksheet('Ações'), bi_db['Ações'])
     update_worksheet_from_df(spreadsheet.worksheet('Contratações'), bi_db['Contratações'])
     update_worksheet_from_df(spreadsheet.worksheet('Etapa_Contratação'), bi_db['Etapa_Contratação'])
@@ -215,3 +219,4 @@ def update_db_drive(bi_db):
     update_worksheet_from_df(spreadsheet.worksheet('Seleções'), bi_db['Seleções'])
     update_worksheet_from_df(spreadsheet.worksheet('Inscrições'), bi_db['Inscrições'])
     update_worksheet_from_df(spreadsheet.worksheet('Inscrições_Moodle'), bi_db['Inscrições_Moodle'])
+    update_worksheet_from_df(spreadsheet.worksheet('Metas'), bi_db['Metas'])

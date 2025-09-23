@@ -25,7 +25,11 @@ def main():
         st.Page("Pages/capacitacoes.py",        title="Capacitações"),
         st.Page("Pages/selecoes.py",            title="Seleções"),
         st.Page("Pages/inscricoes.py",          title="Carregar Inscrições"),
+    ],
+    "Programas": [
+        st.Page("Pages/metas.py",               title="Metas"),
     ]
+
     
     # "Cadastrar ou Alterar": [
     #     st.Page("paginas/cadastro_novo_servidor.py",title="Novo Servidor"),
