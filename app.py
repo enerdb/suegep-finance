@@ -28,7 +28,11 @@ def main():
     ],
     "Programas": [
         st.Page("Pages/metas.py",               title="Metas"),
-    ]
+    ],
+    "Extras": [
+        st.Page("Pages/cel_vanessa.py",          title="Cel Vanessa"),
+    ],
+    
 
     
     # "Cadastrar ou Alterar": [
