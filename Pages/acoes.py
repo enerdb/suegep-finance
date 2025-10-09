@@ -54,7 +54,7 @@ df_display = formatar_df_datas(df_acoes_filtered, cols_datas)
 st.dataframe(df_display)
 
 #########################################
-# FORMULÁRIO PARA ADICIONAR NOVO PROJETO
+# FORMULÁRIO PARA ADICIONAR NOVO AÇÃO
 #########################################
 
 # FORM FUNCTIONS 
