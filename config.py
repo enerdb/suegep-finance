@@ -61,6 +61,46 @@ TABELAS_CONFIG  = {
         'cols_datas': ['Data_Contrato', 'Data_Encerramento_Contrato'],
         'cols_monetarios': ['Valor_Reservado', 'Valor_Empenhado', 'Valor_Liquidado'],
     },
+    'Capacitações': {
+        'chave_primaria': 'id_Capacitação',
+        'campos': [
+            ('id_Ação', 'selectbox', 'Ações'),
+            ('Nome_Capacitação', 'text', None),
+            ('Nome_Escola', 'text', None),
+            ('Nível_Capacitação', 'selectbox', 'Capacitações'),
+            ('Modalidade_Capacitação', 'selectbox', 'Capacitações'),
+            ('Carga_Horária_Horas', 'number', None),
+            ('Vagas_Ofertadas', 'number', None),
+            ('Data_Início_Planejado', 'date', None),
+            ('Data_Fim_Planejado', 'date', None),
+            ('Data_Início_Real', 'date', None),
+            ('Data_Fim_Real', 'date', None),
+
+        ],
+        'cols_datas': ['Data_Início_Planejado', 'Data_Fim_Planejado', 'Data_Início_Real', 'Data_Fim_Real'],
+        'cols_monetarios': [],
+    },
+    'Seleções': {
+        'chave_primaria': 'id_Seleção',
+        'campos': [
+            ('id_Capacitação', 'selectbox', 'Capacitações'), 
+            ('Resposável_Seleção', 'text', None),
+            ('SEI_Seleção', 'text', None),
+        ],
+        'cols_datas': [],
+        'cols_monetarios': [],
+    },
+    'Metas': {
+        'chave_primaria': 'id_Meta',
+        'campos': [
+            ('Programa', 'text', None),
+            ('Nome_Meta', 'text', None),
+            ('Indicador_Meta', 'text', None),
+            ('Medição_Indicador', 'text', None),
+        ],
+        'cols_datas': [],
+        'cols_monetarios': [],
+    },
 # Faltam outras tabelas
 
 

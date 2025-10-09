@@ -3,12 +3,9 @@ import pandas as pd
 from config import TABELAS_CONFIG, SAVE2SHEETS
 
 from sidebar import render_sidebar
-from form_functions import excluir_item
-
 from tools.crud_table import exibir_tabela, formulario_generico, formulario_exclusao
 
 
-from tools.format_df import formatar_df_reais, formatar_df_datas
 
 #########################################
 # CARGA DE DADOS
@@ -28,10 +25,6 @@ config_tabela = TABELAS_CONFIG[tabela_nome]
 
 
 
-df_repasses = st.session_state['bi_db']['Repasses']
-df_contratos = st.session_state['bi_db']['Contratações']
-
-
 #########################################
 # FILTRAGEM E EXIBIÇÃO PARA EXIBIÇÃO
 #########################################
@@ -39,7 +32,7 @@ df_contratos = st.session_state['bi_db']['Contratações']
 df_repasses_filtered            = st.session_state['filtered_db']['Repasses']
 df_projetos_filtered            = st.session_state['filtered_db']['Projetos']
 df_acoes_filtered               = st.session_state['filtered_db']['Ações']
-df_contratacoes_filtered        = st.session_state.filtered_db['Contratações']
+df_contratacoes_filtered        = st.session_state['filtered_db']['Contratações']
 
 
 st.markdown("### Exibição de Contratações")

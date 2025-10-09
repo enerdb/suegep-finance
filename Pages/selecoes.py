@@ -1,12 +1,10 @@
 
 import streamlit as st
-import time
 import pandas as pd
-import config
+from config import TABELAS_CONFIG, SAVE2SHEETS
 
 from sidebar import render_sidebar
-
-from tools.format_df import formatar_df_datas
+from tools.crud_table import exibir_tabela, formulario_generico, formulario_exclusao
 
 #########################################
 # CARGA DE DADOS
@@ -18,14 +16,28 @@ if 'bi_db' not in st.session_state:
 
 render_sidebar()
 
-df_selecoes_filtered = st.session_state.filtered_db['Seleções']
+tabela_nome = 'Seleções'
+config_tabela = TABELAS_CONFIG[tabela_nome]
+
 
 #########################################
 # FILTRAGEM E EXIBIÇÃO PARA EXIBIÇÃO
 #########################################
 
+df_selecoes_filtered = st.session_state.filtered_db['Seleções']
+
 st.markdown("### Exibição de Seleções")
 
-cols_datas = ['Data_Início_Planejado', 'Data_Fim_Planejado', 'Data_Início_Real', 'Data_Fim_Real']
-df_display = formatar_df_datas(df_selecoes_filtered, cols_datas)
-st.dataframe(df_display)
+exibir_tabela(df_selecoes_filtered,
+              cols_datas=config_tabela['cols_datas'],
+              cols_monetarios=config_tabela['cols_monetarios'])
+
+#########################################
+# FORMULÁRIO PARA ADICIONAR NOVA CONTRATAÇÃO
+#########################################
+
+# Adicionar contratção
+formulario_generico(tabela_nome, df_selecoes_filtered, config_tabela['campos'], config_tabela['chave_primaria'])
+
+# Excluir contratação
+formulario_exclusao(tabela_nome, df_selecoes_filtered)

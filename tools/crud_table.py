@@ -6,7 +6,7 @@ from tools.format_df import formatar_df_datas, formatar_df_reais
 ##########################################
 # Helper functions
 def get_new_id(df, chave_primaria, novo_registro):
-    if chave_primaria == 'id_Contratação':
+    if chave_primaria == 'id_Contratação' or chave_primaria == 'id_Capacitação':
 
         # filtrar a ação correspondente à contratação e obter o projeto e o repasse
         id_acao = novo_registro['id_Ação']
