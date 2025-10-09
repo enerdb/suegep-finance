@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import config
+from config import TABELAS_CONFIG, SAVE2SHEETS
 
 from sidebar import render_sidebar
 from form_functions import excluir_item
@@ -18,12 +18,13 @@ if 'bi_db' not in st.session_state:
     st.error("Dados não carregados. Por favor, volte para a página inicial e carregue os dados.")
     st.stop()
 
-save2sheets = config.SAVE2SHEETS
+save2sheets = SAVE2SHEETS
 
 render_sidebar()
 
 tabela_nome = 'Contratações'
-config_tabela = config.TABELAS_CONFIG[tabela_nome]
+
+config_tabela = TABELAS_CONFIG[tabela_nome]
 
 
 
