@@ -36,7 +36,7 @@ def update_filters():
     st.session_state.filtered_db['Seleções'] = st.session_state['bi_db']['Seleções'][
         st.session_state['bi_db']['Seleções']['id_Capacitação'].isin(st.session_state.filtered_db['Capacitações'].index)
     ]
-
+ 
     st.session_state.filtered_db['Seleções'] = st.session_state['bi_db']['Seleções'][
         st.session_state['bi_db']['Seleções']['id_Capacitação'].isin(st.session_state.filtered_db['Capacitações'].index)
     ]

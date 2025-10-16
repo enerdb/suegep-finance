@@ -92,7 +92,9 @@ def confirma_escrita(tabela_nome, df, chave_primaria):
         st.write(novo)
         col1, col2 = st.columns(2)
         if col1.button("Sim"):
-            df.loc[id_novo] = novo
+            
+            st.session_state['bi_db'][tabela_nome].loc[id_novo] = novo
+
             st.success(f"Registro incluído em **{tabela_nome}** com sucesso.")
             time.sleep(1)
             st.rerun()
@@ -109,7 +111,16 @@ def formulario_exclusao(tabela_nome, df):
     id_excluir = st.text_input("ID a ser excluído", placeholder="Verificar na tabela acima")
     if st.button("Excluir"):
         if id_excluir in df.index.astype(str):
-            df.drop(id_excluir, inplace=True)
+            
+            try:
+                st.session_state['bi_db'][tabela_nome].drop(id_excluir, inplace=True)
+            except:
+                try:
+                    st.session_state['bi_db'][tabela_nome].drop(int(id_excluir), inplace=True)
+                except Exception as e:
+                    st.error(f"Erro ao excluir o registro: {e}")
+                    return
+
             st.success(f"Registro `{id_excluir}` excluído de **{tabela_nome}** com sucesso.")
             time.sleep(1)
             st.rerun()
