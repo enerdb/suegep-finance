@@ -70,7 +70,7 @@ def formulario_generico(tabela_nome, df, campos, chave_primaria):
                     novo_registro[campo] = st.selectbox(campo, opcoes)
                              
                 elif tipo == 'date':
-                    novo_registro[campo] = st.date_input(campo, format="DD/MM/YYYY", value=None)
+                    novo_registro[campo] = pd.to_datetime(st.date_input(campo, format="DD/MM/YYYY", value=None))
                 elif tipo == 'number':
                     novo_registro[campo] = st.number_input(campo)
 
