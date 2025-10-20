@@ -41,16 +41,24 @@ def exibir_tabela(df, cols_datas=None, cols_monetarios = None):
     st.dataframe(df_display)
 
 
-def formulario_generico(tabela_nome, df, campos, chave_primaria):
-    st.markdown(f"### Adicionar Novo Registro em **{tabela_nome}**")
+def formulario_generico(tabela_nome, df, campos, chave_primaria, id_editar=None):
 
-    with st.expander("Formulário de Adição"):
-        with st.form(f"form_novo_{tabela_nome}"):
+    if id_editar is not None:
+        modo = "Edição"
+        registro_atual = df.loc[id_editar].to_dict()
+    else:
+        modo = "Adição"
+        registro_atual = {}
+
+    with st.expander(f"Formulário de {modo}"):
+        with st.form(f"form_{modo.lower()}_{tabela_nome}"):
             novo_registro = {}
 
             for campo, tipo, origem in campos:
+                valor_inicial = registro_atual.get(campo, None)
+
                 if tipo == 'text':
-                    novo_registro[campo] = st.text_input(campo)
+                    novo_registro[campo] = st.text_input(campo, value=valor_inicial or "")
 
                 elif tipo == 'selectbox':
                     if isinstance(origem, list):
@@ -67,35 +75,42 @@ def formulario_generico(tabela_nome, df, campos, chave_primaria):
                                 opcoes = df_ref[campo].dropna().unique().tolist()
                         else:
                             opcoes = []
-                    novo_registro[campo] = st.selectbox(campo, opcoes)
+                    idx_default = opcoes.index(valor_inicial) if valor_inicial in opcoes else 0
+                    novo_registro[campo] = st.selectbox(campo, opcoes, index=idx_default)
                              
                 elif tipo == 'date':
-                    novo_registro[campo] = pd.to_datetime(st.date_input(campo, format="DD/MM/YYYY", value=None))
+                    valor_inicial = (pd.to_datetime(valor_inicial) if pd.notna(valor_inicial) else None)
+                    novo_registro[campo] = pd.to_datetime(st.date_input(campo, format="DD/MM/YYYY", value=valor_inicial))
                 elif tipo == 'number':
-                    novo_registro[campo] = st.number_input(campo)
+                    novo_registro[campo] = st.number_input(campo, value=float(valor_inicial or 0))
 
-            id_novo = get_new_id(df, chave_primaria, novo_registro) 
+            id_registro = id_editar or get_new_id(df, chave_primaria, novo_registro) 
 
-            submitted = st.form_submit_button("Adicionar")
+            submitted = st.form_submit_button("Atualizar" if id_editar else "Adicionar")
             if submitted:
                 st.session_state['novo_registro'] = novo_registro
-                st.session_state['id_novo'] = id_novo
-                confirma_escrita(tabela_nome, df, chave_primaria)
+                st.session_state['id_novo'] = id_registro
+                confirma_escrita(tabela_nome, df, chave_primaria, modo)
 
 
-def confirma_escrita(tabela_nome, df, chave_primaria):
+def confirma_escrita(tabela_nome, df, chave_primaria, modo):
     @st.dialog("Confirmação")
     def _dialog():
         id_novo = st.session_state['id_novo']
         novo = st.session_state['novo_registro']
-        st.write(f"Confirma inclusão de novo registro em **{tabela_nome}**?")
+
+        if modo == "Edição":
+            st.write(f"Confirma atualização do registro **{id_novo}** em **{tabela_nome}**?")
+        else:
+            st.write(f"Confirma inclusão de novo registro em **{tabela_nome}**?")
+
         st.write(novo)
         col1, col2 = st.columns(2)
         if col1.button("Sim"):
             
             st.session_state['bi_db'][tabela_nome].loc[id_novo] = novo
 
-            st.success(f"Registro incluído em **{tabela_nome}** com sucesso.")
+            st.success(f"Registro {'atualizado' if modo=='Edição' else 'incluído'} em **{tabela_nome}** com sucesso.")
             time.sleep(1)
             st.rerun()
         if col2.button("Cancelar"):

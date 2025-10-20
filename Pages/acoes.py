@@ -39,8 +39,19 @@ exibir_tabela(df_filtered,
 # FORMULÁRIO PARA ADICIONAR NOVA CAPACITAÇÃO
 #########################################
 
-# Adicionar capacitação
+# Adicionar ação
+st.markdown(f"### Adicionar Registro em **{tabela_nome}**")
 formulario_generico(tabela_nome, df_filtered, config_tabela['campos'], config_tabela['chave_primaria'])
 
-# Excluir capacitação
+# Editar ação
+st.markdown(f"### Editar Registro em **{tabela_nome}**")
+id_editar = st.text_input(f"Digite o ID da ação a ser editada em **{tabela_nome}**:", value="")
+
+if st.button("Editar"):
+    formulario_generico(tabela_nome, df_filtered, config_tabela['campos'], config_tabela['chave_primaria'], id_editar=id_editar)
+
+
+
+
+# Excluir ação
 formulario_exclusao(tabela_nome, df_filtered)
