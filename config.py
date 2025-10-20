@@ -34,7 +34,8 @@ TABELAS_CONFIG  = {
         'chave_primaria': 'id_Ação',
         'campos': [
             ('Nome_Ação', 'text', None),
-            ('id_Projeto', 'selectbox', 'Projetos'), 
+            ('id_Projeto', 'selectbox', 'Projetos'),
+            ('Tipo_Ação','selectbox', ['Capacitação', 'Valorização','Aquisição', 'Outro']),
             ('Data_Início_Planejado', 'date', None),
             ('Data_Fim_Planejado', 'date', None),
             ('Data_Início_Real', 'date', None),
