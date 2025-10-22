@@ -26,6 +26,9 @@ def main():
         st.Page("Pages/selecoes.py",            title="Seleções"),
         st.Page("Pages/inscricoes.py",          title="Carregar Inscrições"),
     ],
+    "Aquisições": [
+        st.Page("Pages/aquisicoes.py",          title="Aquisições"),
+    ],
     "Programas": [
         st.Page("Pages/metas.py",               title="Metas"),
     ],

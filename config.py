@@ -42,6 +42,8 @@ TABELAS_CONFIG  = {
             ('Data_Fim_Real', 'date', None),
             ('Status', 'text', None),
             ('Histórico', 'text', None),
+            ('COOEN', 'checkbox', None),
+            ('COVAP', 'checkbox', None),
         ],
         'cols_datas': ['Data_Início_Planejado', 'Data_Fim_Planejado', 'Data_Início_Real', 'Data_Fim_Real'],
         'cols_monetarios': [],
@@ -101,6 +103,18 @@ TABELAS_CONFIG  = {
         ],
         'cols_datas': [],
         'cols_monetarios': [],
+    },
+    'Aquisições': {
+        'chave_primaria': 'id_Aquisição',
+        'campos': [
+            ('id_Ação', 'selectbox', 'Ações'),
+            ('Nome_Item', 'text', None),
+            ('Valor_Unitário', 'number', None),
+            ('Quantidade', 'number', None),
+            ('Beneficiado', 'selectbox', ['SSP','PMDF','CBMDF','PCDF','Outro']),
+        ],
+        'cols_datas': [],
+        'cols_monetarios': ['Valor_Unitário'],
     },
 # Faltam outras tabelas
 

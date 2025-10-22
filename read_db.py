@@ -99,7 +99,9 @@ def trata_projetos_alteracoes(df):
 
 def trata_acoes(df):
     colunas_datetime = ['Data_Início_Planejado', 'Data_Fim_Planejado', 'Data_Início_Real', 'Data_Fim_Real']
+    colunas_bool = ['COOEN', 'COVAP']
     df = ajusta_datetime_columns(df, colunas_datetime)
+    df = ajusta_boolean_columns(df, colunas_bool)
     return df.set_index('id_Ação')
 
 
@@ -140,6 +142,13 @@ def trata_inscricoes_moodle(df):
 def trata_metas(df):
     return df.set_index('id_Meta')  # ainda não implementado
 
+def trata_aquisicoes(df):
+    colunas_financeiras = ['Valor_Unitário']
+    df = ajusta_dados_financeiros_df(df, colunas_financeiras)
+    return df.set_index('id_Aquisição')  
+
+
+
 
 def trata_apoio(df):
     return df  # ainda não implementado
@@ -164,6 +173,7 @@ def read_db_drive():
         'Inscrições': trata_inscricoes(get_df_from_drive(spreadsheet, 'Inscrições')),
         'Inscrições_Moodle': trata_inscricoes_moodle(get_df_from_drive(spreadsheet, 'Inscrições_Moodle')),
         'Metas': trata_metas(get_df_from_drive(spreadsheet, 'Metas')),
+        'Aquisições': trata_aquisicoes(get_df_from_drive(spreadsheet, 'Aquisições')),
         # 'Apoio': trata_apoio(get_df_from_drive(spreadsheet, 'Apoio')),
     }
 
@@ -185,6 +195,8 @@ def read_db_excel(path: str):
         'Inscrições': trata_inscricoes(pd.read_excel(path, sheet_name='Inscrições')),
         'Inscrições_Moodle': trata_inscricoes_moodle(pd.read_excel(path, sheet_name='Inscrições_Moodle')),
         'Metas': trata_metas(pd.read_excel(path, sheet_name='Metas')),
+        'Aquisições': trata_aquisicoes(pd.read_excel(path, sheet_name='Aquisições')),
+
         # 'Apoio': trata_apoio(pd.read_excel(path, sheet_name='Apoio')),
     }
 

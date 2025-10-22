@@ -60,6 +60,10 @@ def formulario_generico(tabela_nome, df, campos, chave_primaria, id_editar=None)
                 if tipo == 'text':
                     novo_registro[campo] = st.text_input(campo, value=valor_inicial or "")
 
+                elif tipo == 'checkbox':
+                    valor_inicial_bool = bool(valor_inicial) if pd.notna(valor_inicial) else False
+                    novo_registro[campo] = st.checkbox(campo, value=valor_inicial_bool)
+
                 elif tipo == 'selectbox':
                     if isinstance(origem, list):
                         opcoes = origem
