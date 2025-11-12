@@ -27,11 +27,11 @@ config_tabela = TABELAS_CONFIG[tabela_nome]
 # FILTRAGEM E EXIBIÇÃO PARA EXIBIÇÃO
 #########################################
 
-df_capacitacoes_filtered = st.session_state['filtered_db']['Capacitações']
+df_filtered = st.session_state['filtered_db'][tabela_nome]
 
-st.markdown("### Exibição de Capacitações")
+st.markdown(f"### Exibição de {tabela_nome}")
 
-exibir_tabela(df_capacitacoes_filtered,
+exibir_tabela(df_filtered,
               cols_datas=config_tabela['cols_datas'],
               cols_monetarios=config_tabela['cols_monetarios'])
 
@@ -40,7 +40,16 @@ exibir_tabela(df_capacitacoes_filtered,
 #########################################
 
 # Adicionar capacitação
-formulario_generico(tabela_nome, df_capacitacoes_filtered, config_tabela['campos'], config_tabela['chave_primaria'])
+st.markdown(f"### Adicionar Registro em **{tabela_nome}**")
+formulario_generico(tabela_nome, df_filtered, config_tabela['campos'], config_tabela['chave_primaria'])
+
+# Editar ação
+st.markdown(f"### Editar Registro em **{tabela_nome}**")
+id_editar = st.text_input(f"Digite o ID da ação a ser editada em **{tabela_nome}**:", value="")
+
+if st.button("Editar"):
+    formulario_generico(tabela_nome, df_filtered, config_tabela['campos'], config_tabela['chave_primaria'], id_editar=id_editar)
+
 
 # Excluir capacitação
-formulario_exclusao(tabela_nome, df_capacitacoes_filtered)
+formulario_exclusao(tabela_nome, df_filtered)

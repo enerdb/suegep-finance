@@ -56,6 +56,7 @@ def ajusta_boolean_columns(df: pd.DataFrame, columns: list) -> pd.DataFrame:
                 )
     return df
 
+
 ###############################
 # Tratamento de tabelas
 ###############################
@@ -121,7 +122,11 @@ def trata_etapa_contratacao(df):
 
 def trata_capacitacoes(df):
     colunas_datetime = ['Data_Início_Planejado', 'Data_Fim_Planejado', 'Data_Início_Real', 'Data_Fim_Real']
+    colunas_numericas = ['Carga_Horária_Horas', 'Vagas_Ofertadas']
+
     df = ajusta_datetime_columns(df, colunas_datetime)
+    df = ajusta_dados_financeiros_df(df, colunas_numericas) # tentando aplicar a mesmas regra de ajuste financeiro aos dados numéricos não financeiros
+
     return df.set_index('id_Capacitação')
 
 
