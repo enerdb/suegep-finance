@@ -34,6 +34,7 @@ def main():
     ],
     "Extras": [
         st.Page("Pages/cel_vanessa.py",          title="Cel Vanessa"),
+        #st.Page("Pages/editar.py",               title="Editar"),
     ],
     
 

@@ -5,7 +5,7 @@ from tools.format_df import formatar_df_datas, formatar_df_reais
 
 ##########################################
 # Helper functions
-def get_new_id(df, chave_primaria, novo_registro):
+def get_new_id(df, chave_primaria, novo_registro): # função com problema para ids complexos
     if chave_primaria == 'id_Contratação' or chave_primaria == 'id_Capacitação':
 
         # filtrar a ação correspondente à contratação e obter o projeto e o repasse
@@ -24,7 +24,21 @@ def get_new_id(df, chave_primaria, novo_registro):
             st.error(f"Repasse `{id_repasse}` não encontrado. Verifique o ID na tabela de Repasses.")
             st.stop()
 
-        return f"{id_repasse}-{int(id_projeto):03d}-{int(id_acao):04d}"
+        id_base = f"{id_repasse}{int(id_projeto):03d}{int(id_acao):04d}"
+
+        # Garantir que o índice seja string
+        existing_ids = df.index.astype(str)
+
+        if id_base not in existing_ids:
+            return id_base
+
+        # --- Criar sufixos sequenciais ---
+        contador = 1
+        while True:
+            new_id = f"{id_base}-{contador}"
+            if new_id not in existing_ids:
+                return new_id
+            contador += 1
 
     else:
         return int(df.index.astype(int).max() + 1) if not df.empty else 1
@@ -41,16 +55,45 @@ def exibir_tabela(df, cols_datas=None, cols_monetarios = None):
     st.dataframe(df_display)
 
 
+
+def confirma_escrita(tabela_nome, df, chave_primaria, modo):
+    @st.dialog("Confirmação")
+    def _dialog():
+        id_novo = st.session_state['id_novo']
+        novo = st.session_state['novo_registro']
+
+        if modo == "Edição":
+            st.write(f"Confirma atualização do registro **{id_novo}** em **{tabela_nome}**?")
+        else:
+            st.write(f"Confirma inclusão de novo registro em **{tabela_nome}**?")
+
+        st.write(novo)
+        col1, col2 = st.columns(2)
+        if col1.button("Sim"):
+            
+            st.session_state['bi_db'][tabela_nome].loc[id_novo] = novo
+
+            st.success(f"Registro {'atualizado' if modo=='Edição' else 'incluído'} em **{tabela_nome}** com sucesso.")
+            time.sleep(1)
+            st.rerun()
+        if col2.button("Cancelar"):
+            st.warning("Operação cancelada.")
+            st.session_state.pop('novo_registro', None)
+            st.session_state.pop('id_novo', None)
+
+    _dialog()
+
 def formulario_generico(tabela_nome, df, campos, chave_primaria, id_editar=None):
 
     if id_editar is not None:
+        # Se um novo id foi enviado, atualiza o estado
         modo = "Edição"
         registro_atual = df.loc[id_editar].to_dict()
     else:
         modo = "Adição"
         registro_atual = {}
 
-    with st.expander(f"Formulário de {modo}"):
+    with st.expander(modo):
         with st.form(f"form_{modo.lower()}_{tabela_nome}"):
             novo_registro = {}
 
@@ -81,48 +124,28 @@ def formulario_generico(tabela_nome, df, campos, chave_primaria, id_editar=None)
                             opcoes = []
                     idx_default = opcoes.index(valor_inicial) if valor_inicial in opcoes else 0
                     novo_registro[campo] = st.selectbox(campo, opcoes, index=idx_default)
-                             
+                                
                 elif tipo == 'date':
                     valor_inicial = (pd.to_datetime(valor_inicial) if pd.notna(valor_inicial) else None)
                     novo_registro[campo] = pd.to_datetime(st.date_input(campo, format="DD/MM/YYYY", value=valor_inicial))
                 elif tipo == 'number':
                     novo_registro[campo] = st.number_input(campo, value=float(valor_inicial or 0))
 
-            id_registro = id_editar or get_new_id(df, chave_primaria, novo_registro) 
+            id_registro = id_editar or get_new_id(df, chave_primaria, novo_registro) # função com problema para Ids complexos
+
+
+            st.session_state['novo_registro'] = novo_registro
+            st.session_state['id_novo'] = id_registro
+
 
             submitted = st.form_submit_button("Atualizar" if id_editar else "Adicionar")
+
             if submitted:
                 st.session_state['novo_registro'] = novo_registro
                 st.session_state['id_novo'] = id_registro
                 confirma_escrita(tabela_nome, df, chave_primaria, modo)
 
-
-def confirma_escrita(tabela_nome, df, chave_primaria, modo):
-    @st.dialog("Confirmação")
-    def _dialog():
-        id_novo = st.session_state['id_novo']
-        novo = st.session_state['novo_registro']
-
-        if modo == "Edição":
-            st.write(f"Confirma atualização do registro **{id_novo}** em **{tabela_nome}**?")
-        else:
-            st.write(f"Confirma inclusão de novo registro em **{tabela_nome}**?")
-
-        st.write(novo)
-        col1, col2 = st.columns(2)
-        if col1.button("Sim"):
             
-            st.session_state['bi_db'][tabela_nome].loc[id_novo] = novo
-
-            st.success(f"Registro {'atualizado' if modo=='Edição' else 'incluído'} em **{tabela_nome}** com sucesso.")
-            time.sleep(1)
-            st.rerun()
-        if col2.button("Cancelar"):
-            st.warning("Operação cancelada.")
-            st.session_state.pop('novo_registro', None)
-            st.session_state.pop('id_novo', None)
-
-    _dialog()
 
 
 def formulario_exclusao(tabela_nome, df):
@@ -145,3 +168,4 @@ def formulario_exclusao(tabela_nome, df):
             st.rerun()
         else:
             st.error(f"ID `{id_excluir}` não encontrado em **{tabela_nome}**.")
+

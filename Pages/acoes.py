@@ -47,8 +47,9 @@ formulario_generico(tabela_nome, df_filtered, config_tabela['campos'], config_ta
 st.markdown(f"### Editar Registro em **{tabela_nome}**")
 id_editar = st.text_input(f"Digite o ID da ação a ser editada em **{tabela_nome}**:", value="")
 
-if st.button("Editar"):
+if id_editar:
     formulario_generico(tabela_nome, df_filtered, config_tabela['campos'], config_tabela['chave_primaria'], id_editar=id_editar)
+    id_editar = None
 
 
 
